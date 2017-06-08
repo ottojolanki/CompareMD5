@@ -8,6 +8,32 @@ names, and compares them pairwise.
 import hashlib
 import sys
 import os
+from threading import Thread
+
+
+class Md5CalculatingThread(Thread):
+    '''
+    Thread that compares MD5 sums
+    '''
+    def __init__(self, fname1, fname2):
+        '''
+        Initialize thread
+        '''
+        Thread.__init__(self)
+        self.fname1 = fname1
+        self.fname2 = fname2
+
+    def run(self):
+        '''
+        Run the thread
+        '''
+        md5_1 = calculatemd5FromFile(self.fname1)
+        md5_2 = calculatemd5FromFile(self.fname2)
+        base = os.path.basename(self.fname1)
+        equality = 'equal' if md5_1 == md5_2 else 'not equal'
+        print '%s md5 sum is %s' % (self.fname1, md5_1)
+        print '%s md5 sum is %s' % (self.fname2, md5_2)
+        print 'md5 sums are %s for file %s' % (equality, base)
 
 
 def calculatemd5FromFile(filepath):
@@ -49,12 +75,8 @@ def main():
                             name in common_basenames]
     # Do the actual comparison
     for name1, name2 in zip(common_names_in_dir1, common_names_in_dir2):
-        md5_1 = calculatemd5FromFile(name1)
-        md5_2 = calculatemd5FromFile(name2)
-        equality = 'equal' if md5_1 == md5_2 else 'not equal'
-        print '%s md5 sum is %s' % (name1, md5_1)
-        print '%s md5 sum is %s' % (name2, md5_2)
-        print 'md5 sums are %s' % equality
+        thread = Md5CalculatingThread(name1, name2)
+        thread.start()
 
 
 if __name__ == "__main__":
