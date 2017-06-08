@@ -23,6 +23,7 @@ import os
 from threading import Thread
 import argparse
 
+
 EPILOG = '''
           Usage: python comparemd5.py <dir1> <dir2>
          '''
