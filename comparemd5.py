@@ -9,6 +9,7 @@ import hashlib
 import sys
 import os
 from threading import Thread
+import argparse
 
 
 class Md5CalculatingThread(Thread):
@@ -35,6 +36,11 @@ class Md5CalculatingThread(Thread):
         print '%s md5 sum is %s' % (self.fname2, md5_2)
         print 'md5 sums are %s for file %s' % (equality, base)
 
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('dirs', help='Two directories containing files to compare', nargs=2)
+    args = parser.parse_args()
+    return args
 
 def calculatemd5FromFile(filepath):
     '''calculate md5sum of a file in filepath.
@@ -52,8 +58,9 @@ def getAbsolutePath(dirname):
 
 
 def main():
-    dir_1_abspath = getAbsolutePath(sys.argv[1])
-    dir_2_abspath = getAbsolutePath(sys.argv[2])
+    args = get_args()
+    dir_1_abspath = getAbsolutePath(args.dirs[0])
+    dir_2_abspath = getAbsolutePath(args.dirs[1])
     print 'dir1 path: %s ' % dir_1_abspath
     print 'dir2 path: %s ' % dir_2_abspath
     # get basenames of files in both directories to find common ones
