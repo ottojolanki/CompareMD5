@@ -1,14 +1,31 @@
 '''
-Input is two paths to directories that contain files.
-This module compares the mdsums of files with common
-names, and looks at the md5sums of files with same
-names, and compares them pairwise.
+comparemd5.py simple md5 comparison tool for python.
+Copyright (C) 2017 Otto Jolanki
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
+
 
 import hashlib
 import sys
 import os
 from threading import Thread
+import argparse
+
+EPILOG = '''
+          Usage: python comparemd5.py <dir1> <dir2>
+         '''
 
 
 class Md5CalculatingThread(Thread):
@@ -36,14 +53,25 @@ class Md5CalculatingThread(Thread):
         print 'md5 sums are %s for file %s' % (equality, base)
 
 
-def calculatemd5FromFile(filepath):
+def get_args():
+    parser = argparse.ArgumentParser(epilog=EPILOG)
+    parser.add_argument('dirs',
+                        help='Two directories containing files to compare',
+                        nargs=2)
+    args = parser.parse_args()
+    return args
+
+
+def calculatemd5FromFile(filepath, chunksize=4096):
     '''calculate md5sum of a file in filepath.
         do the calculation in chunks of 4096
         bytes as a memory efficiency consideration.'''
     hash_md5 = hashlib.md5()
     with open(filepath, 'rb') as f:
-        for token in iter(lambda: f.read(4096), b""):
-            hash_md5.update(token)
+        # Iter is calling f.read(chunksize) until it returns
+        # the sentinel b''(empty bytes)
+        for chunk in iter(lambda: f.read(chunksize), b''):
+            hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
 
@@ -52,8 +80,9 @@ def getAbsolutePath(dirname):
 
 
 def main():
-    dir_1_abspath = getAbsolutePath(sys.argv[1])
-    dir_2_abspath = getAbsolutePath(sys.argv[2])
+    args = get_args()
+    dir_1_abspath = getAbsolutePath(args.dirs[0])
+    dir_2_abspath = getAbsolutePath(args.dirs[1])
     print 'dir1 path: %s ' % dir_1_abspath
     print 'dir2 path: %s ' % dir_2_abspath
     # get basenames of files in both directories to find common ones
