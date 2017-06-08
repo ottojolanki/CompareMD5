@@ -11,6 +11,9 @@ import os
 from threading import Thread
 import argparse
 
+EPILOG = '''
+          Usage: python comparemd5.py <dir1> <dir2>
+         '''
 
 class Md5CalculatingThread(Thread):
     '''
@@ -37,7 +40,7 @@ class Md5CalculatingThread(Thread):
         print 'md5 sums are %s for file %s' % (equality, base)
 
 def get_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(epilog=EPILOG)
     parser.add_argument('dirs', help='Two directories containing files to compare', nargs=2)
     args = parser.parse_args()
     return args
