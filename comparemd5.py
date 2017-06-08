@@ -29,10 +29,11 @@ class Md5CalculatingThread(Thread):
         '''
         md5_1 = calculatemd5FromFile(self.fname1)
         md5_2 = calculatemd5FromFile(self.fname2)
+        base = os.path.basename(self.fname1)
         equality = 'equal' if md5_1 == md5_2 else 'not equal'
         print '%s md5 sum is %s' % (self.fname1, md5_1)
         print '%s md5 sum is %s' % (self.fname2, md5_2)
-        print 'md5 sums are %s' % equality
+        print 'md5 sums are %s for file %s' % (equality, base)
 
 
 def calculatemd5FromFile(filepath):
