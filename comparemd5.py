@@ -39,6 +39,9 @@ def main():
                        if os.path.isfile(os.path.join(dir_2_abspath, fname))}
     # Make common_basenames a list to ensure order
     common_basenames = list(dir_1_basenames.intersection(dir_2_basenames))
+    if not common_basenames:
+        print "No common filenames were found"
+        sys.exit(1)
     # Expand the basenames back into absolute paths
     common_names_in_dir1 = [os.path.join(dir_1_abspath, name) for
                             name in common_basenames]
