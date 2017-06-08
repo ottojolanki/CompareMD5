@@ -45,14 +45,14 @@ def get_args():
     args = parser.parse_args()
     return args
 
-def calculatemd5FromFile(filepath):
+def calculatemd5FromFile(filepath, chunksize=4096):
     '''calculate md5sum of a file in filepath.
         do the calculation in chunks of 4096
         bytes as a memory efficiency consideration.'''
     hash_md5 = hashlib.md5()
     with open(filepath, 'rb') as f:
-        for token in iter(lambda: f.read(4096), b""):
-            hash_md5.update(token)
+        for chunk in iter(lambda: f.read(chunksize), b""):
+            hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
 
